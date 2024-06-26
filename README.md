@@ -1,3 +1,9 @@
+## Anagrammer game inspired by Woogles or those adfilled mobile games
+
+### Learning to make a game with Python and Pygame and git at the same time
+
+Seriously, those games pushed me to making this. I also loved scrabble so i thought why not get better at programming, git, and word games in the process??? Whole point of this commit anyway is so the commit counts under my github account!
+
 ## IMPORTANT TERMS
 
 ### 1. Alphagram
