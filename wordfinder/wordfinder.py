@@ -1,3 +1,7 @@
+'''
+TODO: Make extend_subanagrams() more intuitive, it changes the original list
+yet it returns a new list. I'll have to sleep on it.
+'''
 from pathlib import Path
 from random import choice
 from itertools import combinations
@@ -8,8 +12,9 @@ class WordFinder:
         # initalize database of words sorted alphagram by anagram
         self.db = {}
 
-        # guranteed path to nwl20.txt
-        lexicon = Path(__file__).with_name('nwl20.txt')
+        # guaranteed path to nwl20.txt
+        assets_dir = Path(__file__).parents[0].with_name('assets')
+        lexicon = assets_dir / 'nwl20.txt'
 
         # load words from nwl20.txt
         # read only first word, definitions can be added later for word lookup
@@ -102,7 +107,9 @@ class WordFinder:
         # initialize list of combinations of alphagram
         combs = []
         # check every combination of alphagram where length is 2 to n-1
-        for length in range(2, len(alphagram) - 1):
+        # note that len(alphagram) is n-1 and not n
+        # i wish i knew why, but i don't
+        for length in range(2, len(alphagram)):
             # permutations of each length
             for combination in combinations(alphagram, length):
                 combs.append("".join(combination))
