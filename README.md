@@ -1,6 +1,26 @@
-## Anagrammer game inspired by Aerolith or those adfilled mobile games
+## Anagrammer game inspired by Aerolith
+or those adfilled mobile games...
+Bare with me as I learn git and pygame
 
-Learning to make a game with Python and Pygame and git at the same time
+## How to play
+
+1. Clone the repository
+2. Either do
+```bash
+pip install -r requirements.txt
+```
+or 
+```bash
+pip install pygame
+```
+3. Controls for Title:
+- Enter: Start game
+
+4. Controls for Game:
+- Typing any letter will add it to staging
+- Backspace: Remove last letter from staging
+- Enter: Submit staging
+- Space: Shuffle rack
 
 ## IMPORTANT TERMS
 
