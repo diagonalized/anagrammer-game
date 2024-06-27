@@ -6,7 +6,7 @@ class State():
         # TODO: back button
         self.previous_state = None
 
-    def update(self):
+    def update(self, delta_time, actions):
         # TODO: input handling
         pass
 

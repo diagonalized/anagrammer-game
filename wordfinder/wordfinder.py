@@ -90,7 +90,7 @@ class WordFinder:
         """
 
         # first word should already be lower-case, only alphagramize it
-        alphagram = "".join(sorted(anagrams[0]))
+        alphagram = self.get_alphagram(anagrams)
         """
         since a list of anagrams that are not perfect anagrams
         does not make sense in the scope of this program,
@@ -102,6 +102,7 @@ class WordFinder:
                 "".join(sorted(word)) == alphagram
                 for word in anagrams
                 ):
+            print("not all words are perfect anagrams in extend_subanagrams()")
             return []
 
         # initialize list of combinations of alphagram
@@ -119,5 +120,23 @@ class WordFinder:
             if comb in self.db:
                 anagrams.extend(self.db[comb])
 
+        # in place because unitutive lol!
+        # list(set(anagrams))
         # return list of anagrams
         return list(set(anagrams))
+
+    def get_alphagram(self, anagrams: list) -> str:
+        """ get alphagram of a list of anagrams
+
+        Args:
+            anagrams: list of anagrams
+
+        Returns:
+            alphagram of the list of anagrams
+
+        """
+
+        # first word should already be lower-case, only alphagramize it
+        alphagram = "".join(sorted(anagrams[0]))
+        # return alphagram
+        return alphagram
