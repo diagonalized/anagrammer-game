@@ -21,11 +21,11 @@ class Title(State):
     def render(self, surface):
         # fill screen with white
         # TODO: add nightmode switch
-        surface.fill((255, 255, 255))
+        surface.fill(self.game.white)
         # draw title text
         self.game.draw_text(
                 self.game.screen, "Anagrammer",
-                (0, 0, 0),  # black, RGB TEST IT?
+                self.game.black,  # black, RGB TEST IT?
                 self.game.SCREEN_WIDTH // 2,  # center x
                 self.game.SCREEN_HEIGHT // 4,  # fourth of the way down
                 "scrabble"

@@ -3,11 +3,9 @@ class State():
     def __init__(self, game):
         # reference to game object
         self.game = game
-        # TODO: back button
         self.previous_state = None
 
     def update(self, delta_time, actions):
-        # TODO: input handling
         pass
 
     def render(self, surface):

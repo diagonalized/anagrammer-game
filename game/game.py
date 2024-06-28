@@ -51,6 +51,9 @@ class Game:
         # load states (title screen for now)
         self.load_states()
 
+        # init colors
+        self.load_colors()
+
     def game_loop(self):
         while self.running:
             self.get_dt()
@@ -145,6 +148,10 @@ class Game:
     def load_states(self):
         self.title_screen = Title(self)
         self.state_stack.append(self.title_screen)
+
+    def load_colors(self):
+        self.black = (0, 0, 0)
+        self.white = (255, 255, 255)
 
     def draw_text(self, surface, text, color, x, y, font):
         # render text to surface

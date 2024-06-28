@@ -47,7 +47,7 @@ class Anagrams(State):
 
     def render(self, surface):
         # fill screen with white
-        surface.fill((255, 255, 255))
+        surface.fill(self.game.white)
         # draw rack
         self.rack.render()
         # draw words
@@ -75,7 +75,7 @@ class Rack:
         # draw rack
         self.game.draw_text(
                 self.game.screen, self.rack,
-                (0, 0, 0),
+                self.game.black,
                 self.game.SCREEN_WIDTH // 2,
                 7 * self.game.SCREEN_HEIGHT // 8,
                 "scrabble"
@@ -83,7 +83,7 @@ class Rack:
         # draw staging
         self.game.draw_text(
                 self.game.screen, self.staging,
-                (0, 0, 0),
+                self.game.black,
                 self.game.SCREEN_WIDTH // 2,
                 6 * self.game.SCREEN_HEIGHT // 8,
                 "scrabble"
@@ -100,11 +100,21 @@ class Rack:
             self.staging += letter
             self.rack = self.rack.replace(letter, "", 1)
 
+    # return staged letter back in order of the alphagram
     def unstage(self):
         # as long as there is something to unstage
         if self.staging:
-            self.rack += self.staging[-1]
+            # self.rack += self.staging[-1]
+            # self.staging = self.staging[:-1]
+            last = self.staging[-1]
+            self.rack = self._insert_letter(self.rack, last)
             self.staging = self.staging[:-1]
+
+    def _insert_letter(self, string, letter):
+        for i, char in enumerate(string):
+            if char > letter:
+                return string[:i] + letter + string[i:]
+        return string + letter
 
 
 class Words:
@@ -163,7 +173,7 @@ class Words:
         # for i in range(len(self.word_list)):
         #     self.game.draw_text(
         #             self.game.screen, self.word_list[i],
-        #             (0, 0, 0),
+        #             self.game.black,
         #             # slightly right of left side
         #             300,
         #             # 1/8 of the way down plus 50 for each word
@@ -221,11 +231,11 @@ class BoxWithLetter:
         # Draw the box
         pygame.draw.rect(self.game.screen, self.box_color, self.box_rect)
         # outline the box
-        pygame.draw.rect(self.game.screen, (0, 0, 0), self.box_rect, 1)
+        pygame.draw.rect(self.game.screen, self.game.black, self.box_rect, 1)
 
         # Render the letter
         letter_surface = self.game.anagram_font.render(
-                self.letter, True, (0, 0, 0)
+                self.letter, True, self.game.black
                 )
         letter_rect = letter_surface.get_rect(center=self.box_rect.center)
 
