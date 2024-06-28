@@ -8,7 +8,7 @@ class Anagrams(State):
         super().__init__(game)
 
         """ INPUT CURRENTLY HARD CODED """
-        length = 4
+        length = 5
         num_anagrams = 1
         self.word_list = self.game.wf.search_by_preference(
                 length, num_anagrams
@@ -26,6 +26,11 @@ class Anagrams(State):
         self.rack = Rack(self.game, self.alphagram)
         self.words = Words(self.game, self.word_list)
 
+        # start with first word selected
+        self.idx = 0
+        self.prev_idx = self.idx
+        self.move_selected()
+
     def update(self, delta_time, actions):
         # exit
         if actions["escape"]:
@@ -42,6 +47,26 @@ class Anagrams(State):
         # validate
         if actions["enter"]:
             self.validate()
+        # select word
+        if actions["up"]:
+            self.idx -= 1
+            self.idx %= len(self.word_list)
+            self.move_selected()
+        if actions["down"]:
+            self.idx += 1
+            self.idx %= len(self.word_list)
+            self.move_selected()
+        if actions["left"]:
+            self.idx -= self.words.m
+            self.idx %= len(self.word_list)
+            self.move_selected()
+        if actions["right"]:
+            self.idx += self.words.m
+            self.idx %= len(self.word_list)
+            self.move_selected()
+        # hint
+        if actions["hint"]:
+            self.words.hint()
         # reset keys
         self.game.reset_keys()
 
@@ -63,6 +88,13 @@ class Anagrams(State):
             self.rack.staging = ""
             # refill rack
             self.rack.rack = self.alphagram
+
+    def move_selected(self):
+        # unselect previous word
+        self.words.words[self.prev_idx].selected = False
+        # select next word
+        self.words.words[self.idx].selected = True
+        self.prev_idx = self.idx
 
 
 class Rack:
@@ -184,16 +216,47 @@ class Words:
     def fill_word(self, idx):
         # check index in self.Words
         self.words[idx].progress = self.words[idx].letters
+        for letter in self.words[idx].boxes:
+            letter.shown = True
         self.words[idx].complete = True
         self.words[idx].update_boxes()
+
+    def hint(self):
+        """ JANKY AS HELL"""
+        # make sure word is selected
+        for word in self.words:
+            if word.selected:
+
+                # add next letter
+                for i in range(len(word.progress)):
+                    if word.progress[i] == "_":
+                        word.progress = word.progress[:i] + word.letters[i] + word.progress[i + 1:]
+                        print(word.progress)
+                        break
+
+                # show letter
+                for i in range(len(word.letters)):
+                    if word.progress[i] != "_":
+                        word.boxes[i].shown = True
+
+                if "_" not in word.progress:
+                    word.complete = True
+
+                word.update_boxes()
+
+                print("hello")
 
 
 class Word:
     def __init__(self, game, word, position):
+        self.game = game
         self.letters = word
         self.boxes = []
         self.progress = '_' * len(self.letters)
         self.complete = False
+        self.selected = False
+        self.box_length = 50
+        self.gap = 10
 
         # position
         self.position = position
@@ -202,8 +265,9 @@ class Word:
             box = BoxWithLetter(
                     game, self.progress[i],
                     (167, 199, 231),  # pastel blue
-                    (50, 50),
-                    (self.position[0] + i * 60, self.position[1])
+                    (self.box_length, self.box_length),
+                    (self.position[0] + i * (self.box_length + self.gap),
+                     self.position[1])
                     )
             self.boxes.append(box)
 
@@ -214,6 +278,23 @@ class Word:
 
     # each letter in word is surrounded by a colored box
     def render(self):
+        # if selected have a low opacity pastel blue
+        # outline is around the whole word
+        if self.selected:
+            outline = pygame.Surface(
+                        (
+                            len(self.letters) * (self.box_length + self.gap),
+                            self.box_length + self.gap)
+                        )
+            outline.set_alpha(128)
+            outline.fill((193, 205, 151))  # test
+            # center it around the word
+            self.game.screen.blit(
+                    outline,
+                    (self.position[0] - self.gap // 2,
+                     self.position[1] - self.gap // 2)
+                    )
+
         for box in self.boxes:
             box.draw()
 
@@ -226,6 +307,7 @@ class BoxWithLetter:
         self.box_size = box_size
         self.position = position
         self.box_rect = pygame.Rect(position, box_size)
+        self.shown = False
 
     def draw(self):
         # Draw the box
@@ -234,10 +316,11 @@ class BoxWithLetter:
         pygame.draw.rect(self.game.screen, self.game.black, self.box_rect, 1)
 
         # Render the letter
-        letter_surface = self.game.anagram_font.render(
-                self.letter, True, self.game.black
-                )
-        letter_rect = letter_surface.get_rect(center=self.box_rect.center)
+        if self.shown:
+            letter_surface = self.game.anagram_font.render(
+                    self.letter, True, self.game.black
+                    )
+            letter_rect = letter_surface.get_rect(center=self.box_rect.center)
 
-        # Draw the letter
-        self.game.screen.blit(letter_surface, letter_rect)
+            # Draw the letter
+            self.game.screen.blit(letter_surface, letter_rect)

@@ -37,6 +37,7 @@ class Game:
                 "escape": False,
                 "letter": None,
                 "backspace": False,
+                "hint": False,
                 }
 
         # initialize dt and prev_time
@@ -45,10 +46,10 @@ class Game:
         # initialize state stack
         self.state_stack = []
 
-        # load assets (font for now)
+        # load assets
         self.load_assets()
 
-        # load states (title screen for now)
+        # load states
         self.load_states()
 
         # init colors
@@ -56,7 +57,6 @@ class Game:
 
     def game_loop(self):
         while self.running:
-            self.get_dt()
             self.get_events()
             self.update()
             self.render()
@@ -76,15 +76,15 @@ class Game:
                 # first enter key
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = True
-                # then movement keys
-                if event.key == pygame.K_h:
-                    self.actions["left"] = True
-                if event.key == pygame.K_l:
-                    self.actions["right"] = True
-                if event.key == pygame.K_k:
+                # then movement keys, arrow keys
+                if event.key == pygame.K_UP:
                     self.actions["up"] = True
-                if event.key == pygame.K_j:
+                if event.key == pygame.K_DOWN:
                     self.actions["down"] = True
+                if event.key == pygame.K_LEFT:
+                    self.actions["left"] = True
+                if event.key == pygame.K_RIGHT:
+                    self.actions["right"] = True
                 # shuffle key
                 if event.key == pygame.K_SPACE:
                     self.actions["space"] = True
@@ -95,26 +95,31 @@ class Game:
                 if event.key == pygame.K_BACKSPACE:
                     self.actions["backspace"] = True
 
+                if event.mod & pygame.KMOD_SHIFT and event.key == pygame.K_h:
+                    self.actions["hint"] = True
+
             # be sure to turn off actions when key is released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.actions["escape"] = False
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = False
-                if event.key == pygame.K_h:
-                    self.actions["left"] = False
-                if event.key == pygame.K_l:
-                    self.actions["right"] = False
-                if event.key == pygame.K_k:
+                if event.key == pygame.K_UP:
                     self.actions["up"] = False
-                if event.key == pygame.K_j:
-                    self.actions["down"]
+                if event.key == pygame.K_DOWN:
+                    self.actions["down"] = False
+                if event.key == pygame.K_LEFT:
+                    self.actions["left"] = False
+                if event.key == pygame.K_RIGHT:
+                    self.actions["right"] = False
                 if event.key == pygame.K_SPACE:
                     self.actions["space"] = False
                 if event.unicode.isalpha():
                     self.actions["letter"] = None
                 if event.key == pygame.K_BACKSPACE:
                     self.actions["backspace"] = False
+                if event.mod & pygame.KMOD_SHIFT and event.key == pygame.K_h:
+                    self.actions["hint"] = False
 
     def update(self):
         self.clock.tick(self.FPS)

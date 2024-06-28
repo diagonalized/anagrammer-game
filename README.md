@@ -21,6 +21,9 @@ pip install pygame
 - Backspace: Remove last letter from staging
 - Enter: Submit staging
 - Space: Shuffle rack
+- arrow keys: move selection
+- Esc: return to menu
+- shift+h: toggle hint on selected word
 
 ## IMPORTANT TERMS
 
