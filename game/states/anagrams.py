@@ -7,18 +7,21 @@ class Anagrams(State):
     def __init__(self, game):
         super().__init__(game)
 
-        length = 5
+        """ INPUT CURRENTLY HARD CODED """
+        length = 4
         num_anagrams = 1
         self.word_list = self.game.wf.search_by_preference(
                 length, num_anagrams
                 )
+
         # for some reason doing search by alphagram doesn't work the 2nd time?
         # self.word_list = self.game.wf.search_by_alphagram("pain")
         # print(self.word_list)
         self.alphagram = self.game.wf.get_alphagram(self.word_list)
         self.word_list = self.game.wf.extend_subanagrams(self.word_list)
-        # sort word list by length ascending
-        # self.word_list.sort(key=len)
+        # alphabetize and sort by length
+        self.word_list.sort()
+        self.word_list.sort(key=len)
 
         self.rack = Rack(self.game, self.alphagram)
         self.words = Words(self.game, self.word_list)
@@ -119,7 +122,7 @@ class Words:
         self.m = 6
         # words in column
         # n = 5
-        self.gap = 60
+        self.gap = 50
 
         # for i in range(len(word_list)):
         #     print(len(max(word_list[i // 5: i // 5 + 5], key=len)))
@@ -144,16 +147,14 @@ class Words:
                     )
         # adds the words to the list of words, their object
         for i in range(len(self.word_list)):
+            # this is hellish
+            word_x = self.game.SCREEN_WIDTH // 32 + self.cumulative_width[i // self.m]
+            word_y = self.game.SCREEN_HEIGHT // 16 + (i % self.m) * 75
+            # make position dynamic by adding i * 50
+            # but also wrap around after 5 words by using % 5
+            # make x add by the length of word times tile size
             self.words.append(
-                    Word(
-                        # make position dynamic by adding i * 50
-                        # but also wrap around after 5 words by using % 5
-                        # make x add by the length of word times tile size
-                        self.game, self.word_list[i],
-                        # this is hellish
-                        (100 + self.cumulative_width[i // self.m],
-                         self.game.SCREEN_HEIGHT // 16 + (i % self.m) * 75)
-                    )
+                    Word(self.game, self.word_list[i], (word_x, word_y))
                 )
 
     def render(self):
