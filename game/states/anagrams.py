@@ -8,20 +8,24 @@ class Anagrams(State):
         super().__init__(game)
 
         """ INPUT CURRENTLY HARD CODED """
-        length = 5
+        length = 7
         num_anagrams = 1
         self.word_list = self.game.wf.search_by_preference(
                 length, num_anagrams
                 )
 
         # for some reason doing search by alphagram doesn't work the 2nd time?
-        # self.word_list = self.game.wf.search_by_alphagram("pain")
+        # self.word_list = self.game.wf.search_by_alphagram("developer")
         # print(self.word_list)
         self.alphagram = self.game.wf.get_alphagram(self.word_list)
         self.word_list = self.game.wf.extend_subanagrams(self.word_list)
         # alphabetize and sort by length
         self.word_list.sort()
         self.word_list.sort(key=len)
+        # restrict to length - 2
+        self.word_list = self.game.wf.restrict_min_length(
+                self.word_list, len(self.alphagram) - 2
+                )
 
         self.rack = Rack(self.game, self.alphagram)
         self.words = Words(self.game, self.word_list)
@@ -164,7 +168,7 @@ class Words:
         self.m = 6
         # words in column
         # n = 5
-        self.gap = 50
+        self.gap = 55
 
         # for i in range(len(word_list)):
         #     print(len(max(word_list[i // 5: i // 5 + 5], key=len)))

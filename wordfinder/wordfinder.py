@@ -140,3 +140,18 @@ class WordFinder:
         alphagram = "".join(sorted(anagrams[0]))
         # return alphagram
         return alphagram
+
+    def restrict_min_length(self, anagrams: list, min_length: int) -> list:
+        """ restrict list of anagrams to minimum length
+
+        Args:
+            anagrams: list of anagrams
+            min_length: minimum length of words to keep
+
+        Returns:
+            list of anagrams that are at least min_length
+
+        """
+
+        # return list of anagrams that are at least min_length
+        return [word for word in anagrams if len(word) >= min_length]
